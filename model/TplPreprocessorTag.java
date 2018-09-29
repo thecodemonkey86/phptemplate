@@ -7,7 +7,7 @@ import java.util.List;
 public class TplPreprocessorTag {
 
 	
-	public static final String PP_TEMPLATE = "<p:basetemplate";
+	public static final String PP_TEMPLATE = "<p:baseTemplate";
 	public static final String PP_JAVASCRIPT = "<p:js";
 	public static final String PP_CSS = "<p:css";
 	public static final String PHP_TPl_INCLUDE_END_TAG = "</p:include";

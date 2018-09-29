@@ -5,7 +5,7 @@ import io.parser.HtmlParser;
 
 public class PhpTemplateTag extends HtmlTag {
 
-	public static final String TAG_NAME = "template" ;
+	public static final String TAG_NAME = "section" ;
 	
 	public PhpTemplateTag() {
 		super(TAG_NAME);

@@ -7,11 +7,6 @@ public class AttrValue {
 
 	private List<IAttrValueElement> elements;
 	
-	public AttrValue(String stringvalue) {
-		this();
-		addElement(new TextAttrValueElement(stringvalue));
-	}
-	
 	public AttrValue() {
 		elements = new ArrayList<>();
 	}

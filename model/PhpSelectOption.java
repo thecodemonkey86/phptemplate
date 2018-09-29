@@ -30,11 +30,13 @@ public class PhpSelectOption extends HtmlTag{
 				
 				a.toPhp(out,directTextOutputBuffer,cfg);
 				PhpOutput.clearDirectTextOutputBuffer(out, directTextOutputBuffer, cfg);
-				HtmlAttr optionValue = getAttrByName("value");
-				out.append("if ").append(CodeUtil.parentheses(selectedValueExpression+" == '"+ optionValue.getStringValue()+'\'')).append(" {\n");
-				CodeUtil.writeLine(out,"echo ' selected=\"selected\"';");
-				out.append('\n');
-				CodeUtil.writeLine(out, "}");
+				if(this.selectedValueExpression != null) {
+					HtmlAttr optionValue = getAttrByName("value");
+					out.append("if ").append(CodeUtil.parentheses(selectedValueExpression+" == '"+ optionValue.getStringValue()+'\'')).append(" {\n");
+					CodeUtil.writeLine(out,"echo ' selected=\"selected\"';");
+					out.append('\n');
+					CodeUtil.writeLine(out, "}");
+				}
 			}
 			
 		}

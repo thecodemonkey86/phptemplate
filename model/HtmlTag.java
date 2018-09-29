@@ -127,6 +127,15 @@ public class HtmlTag extends AbstractNode{
 	public static boolean isVoidTag(String tagName) {
 		return VOID_TAGS.contains(tagName);
 	}
+	
+	public boolean hasAttr(String name) {
+		for(HtmlAttr a : attrs) {
+			if(a.getName().equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 //	protected String toCppString() {
 //		StringBuilder sb=new StringBuilder("<");

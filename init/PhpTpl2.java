@@ -111,8 +111,18 @@ public class PhpTpl2 {
 			Path repositoryPath= execPath.resolve("repository");
 			
 			
-			if (args.length == 1) {
-				Path xmlFile = Paths.get(args[0]);
+			if (args.length >= 1) {
+				
+				String xmlFilePath = args[args.length - 1];
+				for(int i=0;i<args.length - 1;i++) {
+					if(args[i].equals("--debug")) {
+						CssJsProcessor.setDebugMode(true);
+					} else if(args[i].equals("--nocache")) {
+						CssJsProcessor.setNoCache(true);
+					}
+				}
+				
+				Path xmlFile = Paths.get(xmlFilePath);
 				XmlCfgReader handler = new XmlCfgReader(xmlFile.getParent());
 				DefaultXMLReader.read(xmlFile, handler);
 				

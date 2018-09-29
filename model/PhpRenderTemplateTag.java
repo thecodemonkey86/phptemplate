@@ -8,7 +8,7 @@ import config.TemplateConfig;
 
 public class PhpRenderTemplateTag extends HtmlTag {
 
-	public static final String TAG_NAME = "renderTemplate" ;
+	public static final String TAG_NAME = "renderSection" ;
 
 	PhpTemplateTag renderTmpl;
 	

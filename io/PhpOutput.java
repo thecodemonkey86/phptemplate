@@ -80,40 +80,7 @@ public class PhpOutput {
 		}
 	}
 	
-	/*protected static String insertCss(String cppCode, String clsName, Set<String> inlineCss) throws IOException, CancelException {
-		StringBuilder sbInlineCss = new StringBuilder();
-		for(String cssSrc : inlineCss) {
-			String css = new String(Files.readAllBytes(CssJsProcessor.loadCss(cssSrc)), UTF8 );
-			ParseUtil.addOutChunks(sbInlineCss, css, Settings.LINE_WIDTH);
-			sbInlineCss.append('\n');
-		}
-		String templateClass = cppCode;
-		int markerRenderInlineCssBeginIndex = templateClass.indexOf(BEGIN_COMPILED_TEMPLATE_INLINE_CSS)+BEGIN_COMPILED_TEMPLATE_INLINE_CSS.length();
-		int markerRenderInlineCssEndIndex = templateClass.indexOf(END_COMPILED_TEMPLATE_INLINE_CSS);
-		
-		
-		if (markerRenderInlineCssBeginIndex > -1 && markerRenderInlineCssEndIndex > -1) {
-			templateClass = templateClass.substring(0,markerRenderInlineCssBeginIndex)+"\nprotected function renderInlineCss() {\n" + sbInlineCss.toString() +"\n}\n"+ templateClass.substring(markerRenderInlineCssEndIndex);
-			
-		}
-		return templateClass;
-	}
-	
-	protected static String insertTemplate(String cppCode, String clsName, ParserResult layoutParserResult) {
-		StringBuilder out = new StringBuilder();
-		StringBuilder directTextOutputBuffer = new StringBuilder();
-		layoutParserResult.toCpp(out,directTextOutputBuffer);
-		String templateClass = cppCode;
-		int markerRenderInlineCssBeginIndex = templateClass.indexOf(BEGIN_COMPILED_TEMPLATE)+BEGIN_COMPILED_TEMPLATE.length();
-		int markerRenderInlineCssEndIndex = templateClass.indexOf(END_COMPILED_TEMPLATE);
-		
-		
-		if (markerRenderInlineCssBeginIndex > -1 && markerRenderInlineCssEndIndex > -1) {
-			templateClass = templateClass.substring(0,markerRenderInlineCssBeginIndex)+"\nprotected function renderBody(ViewData" + clsName.substring(0,clsName.length()-4) +" $data) {\n" + out.toString() +"\n}\n"+ templateClass.substring(markerRenderInlineCssEndIndex);
-			
-		}
-		return templateClass;
-	}*/
+	 
 	
 	protected static String getJsAsPhp(String jsSrc) throws IOException, CancelException {
 		StringBuilder sbInlineJs = new StringBuilder();
@@ -175,38 +142,7 @@ public class PhpOutput {
 		
 	}
 	
-	/*protected static String insertJs(String cppCode, String clsName, Set<String> inlineJs) throws IOException, CancelException {
-		
-		String templateClass = cppCode;
-		int markerRenderInlineCssBeginIndex = templateClass.indexOf(BEGIN_COMPILED_TEMPLATE_INLINE_JS)+BEGIN_COMPILED_TEMPLATE_INLINE_JS.length();
-		int markerRenderInlineCssEndIndex = templateClass.indexOf(END_COMPILED_TEMPLATE_INLINE_JS);
-		
-		
-		if (markerRenderInlineCssBeginIndex > -1 && markerRenderInlineCssEndIndex > -1) {
-			templateClass = templateClass.substring(0,markerRenderInlineCssBeginIndex)+"\nprotected function renderInlineJs() {\n" + getJsAsPhp(inlineJs) +"\n}\n"+ templateClass.substring(markerRenderInlineCssEndIndex);
-			
-		}
-		return templateClass;
-	}
-	
-	protected static String insertJsAsMethodCall(String cppCode, String clsName, Set<String> inlineJs) throws IOException {
-		String templateClass = cppCode;
-		int markerRenderInlineCssBeginIndex = templateClass.indexOf(BEGIN_COMPILED_TEMPLATE_INLINE_JS)+BEGIN_COMPILED_TEMPLATE_INLINE_JS.length();
-		int markerRenderInlineCssEndIndex = templateClass.indexOf(END_COMPILED_TEMPLATE_INLINE_JS);
-		StringBuilder sbInlineJs = new StringBuilder();
-		for(String jsSrc : inlineJs) {
-			sbInlineJs.append("InlineJsRenderer::")
-			.append(getJsOrCssMethodName(jsSrc)).append("();");
-			sbInlineJs.append('\n');
-		}
-		
-		if (markerRenderInlineCssBeginIndex > -1 && markerRenderInlineCssEndIndex > -1) {
-			templateClass = templateClass.substring(0,markerRenderInlineCssBeginIndex)+"\nfunction renderInlineJs() {\n" + sbInlineJs.toString() +"\n}\n"+ templateClass.substring(markerRenderInlineCssEndIndex);
-			
-		}
-		return templateClass;
-	}
-	*/
+	 
 	public static void writeJsPhpFile(Path directory, String namespace, Set<String> inlineJs) throws IOException, CancelException {
 		
 		if (!Files.exists(directory))
@@ -257,67 +193,47 @@ public class PhpOutput {
 		
 	}
 	
-	public static String getPhpEscapedString(String s) {
-		return StringUtil.replaceAll( s.replace( "\\", "\\\\").replace("\'", "\\\'").replace("\"", "\\\""),Arrays.asList(
+	
+	public static String getAsPhpStringLiteral(String s) {
+
+		String escapeSequences = StringUtil.replaceAll(s,Arrays.asList(
+				new Pair<String, String>("\\", "\\\\"),
 				new Pair<String, String>("\r", "\\r"),
 				new Pair<String, String>("\n", "\\n"),
 				new Pair<String, String>("\t", "\\t")
-			));
+				
+				
+				));
+		
+		char quot = escapeSequences.contains("\\") ? '"' : '\'';
+		
+		String escapeQuots = escapeSequences.contains("\\") ? escapeSequences.replace("\"", "\\\"").replace("$", "\\$") : escapeSequences.replace("\'", "\\\'"); 
+		
+		return quot + escapeQuots + quot;
 	}
 	
 	public static void addOutChunks(StringBuilder out,String outLine,int lineWidth,TemplateConfig cfg ) {
 		if (outLine.length()>lineWidth) {
-			for(int i=0;i<=outLine.length()-lineWidth;i+=lineWidth) {
-				String phpEscapedString = getPhpEscapedString(outLine.substring(i,i+lineWidth));
-				
-				/*if(cfg != null && cfg.isRenderToString()) {
-					if(phpEscapedString.contains("\\")) {
-						out.append(cfg.getRenderToStringVariableName()).append(" .= \""+ phpEscapedString.replace("$", "\\$")  + "\";");
-					} else {
-						out.append(cfg.getRenderToStringVariableName()).append(" .= \'"+ phpEscapedString  + "\';");	
-					}
-				} else {*/
-					if(phpEscapedString.contains("\\")) {
-						out.append("echo \""+ phpEscapedString.replace("$", "\\$")  + "\";");
-					} else {
-						out.append("echo \'"+ phpEscapedString  + "\';");	
-					}
-				//}
+			int i=0;
+			for(i=0;i<=outLine.length()-lineWidth;i+=lineWidth) {
+				int offset = 0;
+				if(outLine.substring(i,i+lineWidth).endsWith("\\")) {
+					offset = 1;
+				}
+				out.append("echo "+ getAsPhpStringLiteral(outLine.substring(i,i+lineWidth+offset))  + ";");
+				if(offset > 0) {
+					i+=offset;
+				}
 				out.append('\n');
 			}
-			if (outLine.length() % lineWidth != 0) {
-				String phpEscapedString = getPhpEscapedString(outLine.substring((outLine.length()/lineWidth)*lineWidth));
-				
-				/*if(cfg != null && cfg.isRenderToString()) {
-					if(phpEscapedString.contains("\\")) {
-						out.append(cfg.getRenderToStringVariableName()).append(" .= \""+ phpEscapedString.replace("$", "\\$")  + "\";");
-					} else {
-						out.append(cfg.getRenderToStringVariableName()).append(" .= \'"+ phpEscapedString  + "\';");					
-					}
-				} else {*/
-					if(phpEscapedString.contains("\\")) {
-						out.append("echo \""+ phpEscapedString.replace("$", "\\$")  + "\";");
-					} else {
-						out.append("echo \'"+ phpEscapedString  + "\';");					
-					}
-				//}
+			String lastChunk = outLine.substring(i);
+			if (!lastChunk.isEmpty()) {
+			
+				out.append("echo "+ getAsPhpStringLiteral(lastChunk) + ";");
 				out.append('\n');
 			}
 		} else if (!outLine.isEmpty()){
-			String phpEscapedString = getPhpEscapedString(outLine);
-			/*if(cfg != null && cfg.isRenderToString()) {
-				if(phpEscapedString.contains("\\")) {
-					out.append(cfg.getRenderToStringVariableName()).append(" = \""+ phpEscapedString.replace("$", "\\$")  + "\";");
-				} else {
-					out.append(cfg.getRenderToStringVariableName()).append(" = \'"+ phpEscapedString  + "\';");
-				}
-			} else {*/
-				if(phpEscapedString.contains("\\")) {
-					out.append("echo \""+ phpEscapedString.replace("$", "\\$")  + "\";");
-				} else {
-					out.append("echo \'"+ phpEscapedString  + "\';");
-				}
-			//}
+			out.append("echo "+ getAsPhpStringLiteral(outLine)  + ";");
 			
 			
 			out.append('\n');

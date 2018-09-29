@@ -260,7 +260,7 @@ public class HtmlParser {
 			}
 			next();
 		}
-		throw new IOException("syntax error. missing closing quote");
+		throw new IOException("syntax error. missing closing quote | "+attrName);
 		
 	}
 
@@ -291,7 +291,7 @@ public class HtmlParser {
 					tag = new PhpCommentTag();
 				} else if (tagName.equals(PhpRenderSubtemplateTag.TAG_NAME)) {
 					tag = new PhpRenderSubtemplateTag();
-				}  else if (tagName.equals(PhpSelect.TAG_NAME)) {
+				} else if (tagName.equals(PhpSelect.TAG_NAME)) {
 					tag = new PhpSelect();
 				} else if (tagName.equals(PhpSelectOption.TAG_NAME)) {
 					tag = new PhpSelectOption();

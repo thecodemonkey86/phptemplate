@@ -29,30 +29,31 @@ public class PhpSelect extends HtmlTag{
 		}
 		
 		directTextOutputBuffer.append(">");
-		HtmlAttr value = getAttrByName("value");
+		HtmlAttr value = hasAttr("value") ? getAttrByName("value") : null;
 		PhpOutput.clearDirectTextOutputBuffer(out, directTextOutputBuffer, cfg);
 		if(childNodes != null && !childNodes.isEmpty()) {
 			
-			for (AbstractNode node : childNodes) {
-				try {
-					node.walkTree(new WalkTreeAction() {
-						
-						@Override
-						public void currentNode(AbstractNode node, ParserResult parserResult) throws IOException {
-							if(node instanceof PhpSelectOption) {
-								PhpSelectOption opt = (PhpSelectOption) node;
-								opt.setSelectedValueExpression(value.getStringValue());
-							}
+			if(value != null) {
+				for (AbstractNode node : childNodes) {
+					try {
+						node.walkTree(new WalkTreeAction() {
 							
-						}
-					}, null);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+							@Override
+							public void currentNode(AbstractNode node, ParserResult parserResult) throws IOException {
+								if(node instanceof PhpSelectOption) {
+									PhpSelectOption opt = (PhpSelectOption) node;
+									opt.setSelectedValueExpression(value.getStringValue());
+								}
+								
+							}
+						}, null);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 				}
-				
 			}
-			
 			for (AbstractNode node : childNodes) {
 				if(node instanceof TextNode) {
 					continue;
@@ -65,13 +66,15 @@ public class PhpSelect extends HtmlTag{
 			HtmlAttr options = getAttrByName("options");
 			out.append("foreach ").append(CodeUtil.parentheses(options.getStringValue()+" as $__key => $__value")).append("{\n");
 			
-			directTextOutputBuffer.append("<option name=\"");
+			directTextOutputBuffer.append("<option value=\"");
 			PhpOutput.clearDirectTextOutputBuffer(out, directTextOutputBuffer, cfg);
 			CodeUtil.writeLine(out,"echo $__key;");
 			CodeUtil.writeLine(out,"echo '\"';");
-			out.append("if ").append(CodeUtil.parentheses(value.getStringValue()+" == $__key")).append("{\n");
-			CodeUtil.writeLine(out,"echo ' selected=\"selected\"';");
-			CodeUtil.writeLine(out, "}");
+			if(value != null) {
+				out.append("if ").append(CodeUtil.parentheses(value.getStringValue()+" == $__key")).append("{\n");
+				CodeUtil.writeLine(out,"echo ' selected=\"selected\"';");
+				CodeUtil.writeLine(out, "}");
+			}
 			CodeUtil.writeLine(out,"echo '>';");
 			CodeUtil.writeLine(out,"echo $__value;");
 			CodeUtil.writeLine(out,"echo '</option>';");
