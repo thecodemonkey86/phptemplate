@@ -217,8 +217,8 @@ public class PhpOutput {
 			int i=0;
 			for(i=0;i<=outLine.length()-lineWidth;i+=lineWidth) {
 				int offset = 0;
-				if(outLine.substring(i,i+lineWidth).endsWith("\\")) {
-					offset = 1;
+				while(outLine.substring(i,i+lineWidth+offset).endsWith("\\")) {
+					offset++;
 				}
 				out.append("echo "+ getAsPhpStringLiteral(outLine.substring(i,i+lineWidth+offset))  + ";");
 				if(offset > 0) {
