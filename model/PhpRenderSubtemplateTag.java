@@ -30,7 +30,7 @@ public class PhpRenderSubtemplateTag extends HtmlTag {
 	public void toPhp(StringBuilder out,StringBuilder directTextOutputBuffer,TemplateConfig cfg) {
 		HtmlParser p = new HtmlParser();
 		try {
-			String html = new String( Files.readAllBytes(basePath.resolve("subtemplates").resolve(getAttrByName("name").getStringValue() +".html")),UTF8 );
+			String html = new String( Files.readAllBytes(basePath.resolve("Subtemplates").resolve(getAttrByName("name").getStringValue() +".html")),UTF8 );
 			ParserResult result = p.parse(html);
 			result.getSimpleTemplate().toPhp(out, directTextOutputBuffer, cfg);
 		} catch (IOException e) {

@@ -138,7 +138,7 @@ public class PhpTpl2 {
 				}
 				//PhpOutput.writeCompiledTemplateFile(result, directory, namespace, clsName);
 				PhpOutput.writeJsPhpFile(TemplateConfig.getDestPath().resolve("CompiledTemplate"), TemplateConfig.getNamespace()+"\\CompiledTemplate", collectInlineJs);
-				PhpOutput.writeCssPhpFile(TemplateConfig.getDestPath().resolve("CompiledTemplate"), TemplateConfig.getNamespace()+"\\CompiledTemplate", collectInlineCss);
+				PhpOutput.writeCssPhpFile(TemplateConfig.getDestPath().resolve("CompiledTemplate"), TemplateConfig.getNamespace()+"\\CompiledTemplate", collectInlineCss, TemplateConfig.isOptionInlineCssImages());
 			} 
 			
 			

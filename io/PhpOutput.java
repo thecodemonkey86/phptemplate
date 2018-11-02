@@ -90,10 +90,10 @@ public class PhpOutput {
 		return sbInlineJs.toString();
 	}
 	
-	protected static String getCssAsPhp(Set<String> inlineCss) throws IOException, CancelException {
+	protected static String getCssAsPhp(Set<String> inlineCss, boolean inlineImagesBase64) throws IOException, CancelException {
 		StringBuilder sbInlineCss = new StringBuilder();
 		for(String cssSrc : inlineCss) {
-			String css = CssJsProcessor.getInlineCss(cssSrc);;
+			String css = CssJsProcessor.getInlineCss(cssSrc, inlineImagesBase64);
 			addOutChunks(sbInlineCss, css, Settings.LINE_WIDTH,null);
 			sbInlineCss.append('\n');
 		}
@@ -168,7 +168,7 @@ public class PhpOutput {
 		
 	}
 	
-	public static void writeCssPhpFile(Path directory, String namespace, Set<String> inlineCss) throws IOException, CancelException {
+	public static void writeCssPhpFile(Path directory, String namespace, Set<String> inlineCss, boolean inlineImagesBase64) throws IOException, CancelException {
 		
 		if (!Files.exists(directory))
 			Files.createDirectories(directory);
@@ -181,7 +181,7 @@ public class PhpOutput {
 
 		for(String cssSrc : inlineCss) {
 			CodeUtil.writeLine(sb, "public static function " + getJsOrCssMethodName(cssSrc) + "() {");
-			CodeUtil.writeLine(sb, getCssAsPhp(inlineCss));
+			CodeUtil.writeLine(sb, getCssAsPhp(inlineCss, inlineImagesBase64));
 			CodeUtil.writeLine(sb,"}");
 		}
 		

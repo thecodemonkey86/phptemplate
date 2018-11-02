@@ -42,6 +42,9 @@ public class CssJsProcessor {
 	}
 	
 	protected static Path load(String src, String ext, Compressor compressor) throws IOException, CancelException {
+		if(!Files.exists(repositoryPath.resolve(ext))) {
+			Files.createDirectories(repositoryPath.resolve(ext));
+		}
 		String fileName = null;
 		Path file = null;
 		String minfileName = null;
@@ -116,60 +119,62 @@ public class CssJsProcessor {
 		
 	}
 	
-	public static String getInlineCss(String cssSrc) throws IOException, CancelException {
-		return replaceCssUrlsForInline(cssSrc, new String(Files.readAllBytes(loadCss(cssSrc)), StandardCharsets.UTF_8 ));
+	public static String getInlineCss(String cssSrc, boolean inlineImagesBase64) throws IOException, CancelException {
+		return replaceCssUrlsForInline(cssSrc, new String(Files.readAllBytes(loadCss(cssSrc)), StandardCharsets.UTF_8 ), inlineImagesBase64);
 		//return new String(Files.readAllBytes(loadCss(cssSrc)), StandardCharsets.UTF_8 );
 	}
 	
-	private static String replaceCssUrlsForInline(String path, String css) throws IOException, CancelException {
-		String substr = "background-image";
-		for(int i=0;i<css.length();i++) {
-			if(css.regionMatches(i, substr, 0, substr.length())) {
-				boolean skip = false;
-				for(int j=i+substr.length();j<css.length();j++) {
-					if(css.charAt(j)==':') {
-						for(int k=j+1;k<css.length();k++) {
-							
-							switch (css.charAt(k)) {
-							case ' ':
-							case '\t':
-							case '\n':
-							case '\r':
-								continue;
-							default:
-								String substrUrlTag = "url";
-								if(css.regionMatches(k, substrUrlTag, 0, substrUrlTag.length())) {
-									int urlStart = css.indexOf('"',k+substrUrlTag.length());
-									int urlEnd = css.indexOf('"',urlStart+1);
-									if(urlStart>-1 && urlEnd>-1) {
-										String url = css.substring(urlStart+1,urlEnd);
-										
-										if(url.contains("://")) {
-											//ShoshoneClient sc = new ShoshoneClient(url);
-											//sc.applyGetRequest();
+	private static String replaceCssUrlsForInline(String path, String css, boolean inlineImagesBase64) throws IOException, CancelException {
+		if(inlineImagesBase64) {
+			String substr = "background-image";
+			for(int i=0;i<css.length();i++) {
+				if(css.regionMatches(i, substr, 0, substr.length())) {
+					boolean skip = false;
+					for(int j=i+substr.length();j<css.length();j++) {
+						if(css.charAt(j)==':') {
+							for(int k=j+1;k<css.length();k++) {
+								
+								switch (css.charAt(k)) {
+								case ' ':
+								case '\t':
+								case '\n':
+								case '\r':
+									continue;
+								default:
+									String substrUrlTag = "url";
+									if(css.regionMatches(k, substrUrlTag, 0, substrUrlTag.length())) {
+										int urlStart = css.indexOf('"',k+substrUrlTag.length());
+										int urlEnd = css.indexOf('"',urlStart+1);
+										if(urlStart>-1 && urlEnd>-1) {
+											String url = css.substring(urlStart+1,urlEnd);
+											
+											if(url.contains("://")) {
+												//ShoshoneClient sc = new ShoshoneClient(url);
+												//sc.applyGetRequest();
+											} else {
+												Path p = basePath.resolve( Paths.get( path) .getParent().resolve( url));
+												System.out.println(p);
+												String mime = Files.probeContentType(p);
+												css = String.format("%s\"data:%s;base64,%s\"%s", css.substring(0, urlStart),mime,Base64.getEncoder().encodeToString(Files.readAllBytes(p)),css.substring(urlEnd+1));
+											}
+											
 										} else {
-											Path p = basePath.resolve( Paths.get( path) .getParent().resolve( url));
-											System.out.println(p);
-											String mime = Files.probeContentType(p);
-											css = String.format("%s\"data:%s;base64,%s\"%s", css.substring(0, urlStart),mime,Base64.getEncoder().encodeToString(Files.readAllBytes(p)),css.substring(urlEnd+1));
+											throw new IOException();
 										}
 										
 									} else {
-										throw new IOException();
+										skip = true;
+										break;
 									}
-									
-								} else {
-									skip = true;
+								}
+								if(skip) {
 									break;
 								}
 							}
-							if(skip) {
-								break;
-							}
 						}
-					}
-					if(skip) {
-						break;
+						if(skip) {
+							break;
+						}
 					}
 				}
 			}

@@ -31,9 +31,9 @@ public class HtmlEscapedOutputSection extends AbstractNode implements IAttrValue
 	public void toPhp(StringBuilder out,StringBuilder directTextOutputBuffer,TemplateConfig cfg) {
 		PhpOutput.clearDirectTextOutputBuffer(out, directTextOutputBuffer, cfg);
 		//if(cfg.isRenderToString()) {
-		//	out.append( String.format("echo htmlentities(%s,ENT_COMPAT | ENT_HTML5);\n",expression));
+		//	out.append( String.format("echo htmlentities(%s,ENT_COMPAT | ENT_HTML401);\n",expression));
 		//} else {
-			out.append( String.format("echo htmlentities(%s,ENT_COMPAT | ENT_HTML5);\n",expression));
+			out.append( String.format("echo htmlentities(%s,ENT_COMPAT | ENT_HTML401);\n",expression));
 		//}
 		
 	}

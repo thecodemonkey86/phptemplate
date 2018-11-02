@@ -9,6 +9,15 @@ public class TemplateConfig {
 	private static String namespace;
 	private boolean renderToString;
 	private String renderToStringVariableName;
+	private static boolean optionInlineCssImages;
+	
+	public static void setOptionInlineCssImages(boolean optionInlineCssImages) {
+		TemplateConfig.optionInlineCssImages = optionInlineCssImages;
+	}
+	
+	public static boolean isOptionInlineCssImages() {
+		return optionInlineCssImages;
+	}
 	
 	public String getClsName() {
 		return clsName;
