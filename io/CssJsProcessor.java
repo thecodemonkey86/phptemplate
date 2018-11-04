@@ -153,9 +153,10 @@ public class CssJsProcessor {
 												//sc.applyGetRequest();
 											} else {
 												Path p = basePath.resolve( Paths.get( path) .getParent().resolve( url));
-												System.out.println(p);
-												String mime = Files.probeContentType(p);
-												css = String.format("%s\"data:%s;base64,%s\"%s", css.substring(0, urlStart),mime,Base64.getEncoder().encodeToString(Files.readAllBytes(p)),css.substring(urlEnd+1));
+												if(Files.exists(p)) {
+													String mime = Files.probeContentType(p);
+													css = String.format("%s\"data:%s;base64,%s\"%s", css.substring(0, urlStart),mime,Base64.getEncoder().encodeToString(Files.readAllBytes(p)),css.substring(urlEnd+1));
+												}
 											}
 											
 										} else {

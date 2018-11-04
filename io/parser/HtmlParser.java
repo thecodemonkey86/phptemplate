@@ -7,6 +7,7 @@ import util.Pair;
 import util.ParseUtil;
 import model.AbstractNode;
 import model.AttrValue;
+import model.EmptyHtmlAttr;
 import model.PhpCodeTag;
 import model.PhpCommentTag;
 import model.PhpElseTag;
@@ -222,6 +223,13 @@ public class HtmlParser {
 		int indexEq = pEq.getValue2();
 		String attrName = pEq.getValue1().trim();
 		if (!attrName.matches("[a-zA-Z-]+")) {
+			String[] arr = attrName.split("\\s");
+			
+			if(arr[0].matches("[a-zA-Z-]+")) {
+				currentPos += arr[0].length();
+				return new EmptyHtmlAttr(arr[0]);
+			}
+			
 			throw new IOException(String.format("syntax error. Attr name [%s] must match [a-zA-Z-]+", attrName));
 		}
 		Pair<Integer, Character> pQuot = ParseUtil.firstIndexOf(html, '\"', '\'', indexEq);

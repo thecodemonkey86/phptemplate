@@ -102,6 +102,12 @@ public class XmlCfgReader implements ContentHandler {
 				TemplateConfig.setDestPath( this.xmlDir.resolve("view"));
 			}
 			TemplateConfig.setNamespace(atts.getValue("namespace"));
+			
+			String enableBase64CssImage = atts.getValue("enabledBase64CssImages");
+			if(enableBase64CssImage != null) {
+				TemplateConfig.setOptionInlineCssImages(enableBase64CssImage.equals("true")||enableBase64CssImage.equals("1"));
+			}
+			
 			break;
 		case template:
 			currentCfg = new TemplateConfig(); 
