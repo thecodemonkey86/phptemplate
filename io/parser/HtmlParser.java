@@ -10,6 +10,7 @@ import model.AttrValue;
 import model.EmptyHtmlAttr;
 import model.PhpCodeTag;
 import model.PhpCommentTag;
+import model.PhpDefaultCaseTag;
 import model.PhpElseTag;
 import model.PhpForTag;
 import model.PhpIfTag;
@@ -17,12 +18,14 @@ import model.PhpRenderSubtemplateTag;
 import model.PhpRenderTemplateTag;
 import model.PhpSelect;
 import model.PhpSelectOption;
+import model.PhpSwitchTag;
 import model.PhpTemplateTag;
 import model.PhpThenTag;
 import model.HtmlAttr;
 import model.HtmlBr;
 import model.HtmlTag;
 import model.ParserResult;
+import model.PhpCaseTag;
 import model.HtmlEscapedOutputSection;
 import model.RawOutputSection;
 import model.Template;
@@ -295,6 +298,12 @@ public class HtmlParser {
 					tag = new PhpThenTag();
 				} else if (tagName.equals(PhpElseTag.TAG_NAME)) {
 					tag = new PhpElseTag();
+				} else if (tagName.equals(PhpSwitchTag.TAG_NAME)) {
+					tag = new PhpSwitchTag();
+				} else if (tagName.equals(PhpCaseTag.TAG_NAME)) {
+					tag = new PhpCaseTag();
+				} else if (tagName.equals(PhpDefaultCaseTag.TAG_NAME)) {
+					tag = new PhpDefaultCaseTag();
 				} else if (tagName.equals(PhpCommentTag.TAG_NAME)) {
 					tag = new PhpCommentTag();
 				} else if (tagName.equals(PhpRenderSubtemplateTag.TAG_NAME)) {
