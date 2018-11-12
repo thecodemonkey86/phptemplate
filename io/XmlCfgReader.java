@@ -119,7 +119,7 @@ public class XmlCfgReader implements ContentHandler {
 			String tplSubDir = null;
 			Path tplPath = TemplateConfig.getSrcPath().resolve("Templates");
 			if (tplClsFile == null) {
-				tplSubDir = atts.getValue("path");
+				tplSubDir = atts.getValue("subdir");
 				Path tplClsFileDirectory =  TemplateConfig.getDestPath();
 				if (tplSubDir != null && !tplSubDir.isEmpty()) {
 					tplClsFileDirectory = tplClsFileDirectory.resolve(tplSubDir);

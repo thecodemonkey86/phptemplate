@@ -128,18 +128,19 @@ public class PhpOutput {
 		CodeUtil.writeLine(sb,"}");
 		StringBuilder out = new StringBuilder();
 		StringBuilder directTextOutputBuffer = new StringBuilder();
-		layoutResult.getSimpleTemplate().toPhp(out,directTextOutputBuffer,cfg);
-		CodeUtil.writeLine(sb, "public static function renderBody($data) {");
-		CodeUtil.writeLine(sb,out.toString());
-		CodeUtil.writeLine(sb,"}");
-		
-		
-		CodeUtil.writeLine(sb,"}");
-		
+		if(layoutResult.getSimpleTemplate() != null) {
+			layoutResult.getSimpleTemplate().toPhp(out,directTextOutputBuffer,cfg);
+			CodeUtil.writeLine(sb, "public static function renderBody($data) {");
+			CodeUtil.writeLine(sb,out.toString());
+			CodeUtil.writeLine(sb,"}");
 			
-		
-		Files.write(directory.resolve(clsName+ "CompiledTemplate.php"), sb.toString().getBytes(UTF8), StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
-		
+			
+			CodeUtil.writeLine(sb,"}");
+			
+				
+			
+			Files.write(directory.resolve(clsName+ "CompiledTemplate.php"), sb.toString().getBytes(UTF8), StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+		}
 	}
 	
 	 

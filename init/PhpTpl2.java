@@ -8,12 +8,17 @@ import io.parser.HtmlParser;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import config.TemplateConfig;
 import settings.Settings;
@@ -33,16 +38,48 @@ public class PhpTpl2 {
 		return new String(Files.readAllBytes(p),Charset.forName("UTF-8"));
 	}
 	
-	private static void compileTemplate(Path basePath, Path repositoryPath,Settings settings, String clsName, Path templatePath, Path cppFile, Path destBasePath, Set<String> collectInlineJs, Set<String> collectInlineCss,TemplateConfig cfg) throws IOException, CancelException {
+	private static void compileTemplate(Path basePath, Path repositoryPath,Settings settings, String clsName, Path templatePath, Path phpFile, Path destBasePath, Set<String> collectInlineJs, Set<String> collectInlineCss,TemplateConfig cfg) throws IOException, CancelException {
 		CssJsProcessor.setBasePath(basePath);
 		CssJsProcessor.setRepositoryPath(repositoryPath);
 		CssJsProcessor.setSettings(settings);
 		CssJsProcessor.setNoCache(false);
 		PhpRenderSubtemplateTag.setBasePath(basePath);
 		
+		Path pathCompiledTemplate = destBasePath.resolve("CompiledTemplate");
+//		Files.walkFileTree(pathCompiledTemplate,new FileVisitor<Path>() {
+//
+//			@Override
+//			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+//				return FileVisitResult.CONTINUE;
+//			}
+//
+//			@Override
+//			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+//				Files.delete(file);
+//				return FileVisitResult.CONTINUE;
+//			}
+//
+//			@Override
+//			public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+//				return FileVisitResult.CONTINUE;
+//			}
+//
+//			@Override
+//			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+//				return FileVisitResult.CONTINUE;
+//			}
+//		});
+		
+		
 		HtmlParser p=new HtmlParser();
 		ParserResult result = p.parse(readUtf8(templatePath));
 		
+		String subdir = destBasePath.relativize(phpFile.getParent()).toString();
+		String subNamespace = subdir.replace('/', '\\');
+		if(!subNamespace.isEmpty() && !subNamespace.startsWith("\\")) {
+			subNamespace = "\\" + subNamespace;
+		}
+		System.out.println(subdir);
 		
 		if (result.isMultiTemplate()) {
 			for(TplPreprocessorTag pp: result.getPreprocessorTags()) {
@@ -64,14 +101,14 @@ public class PhpTpl2 {
 				collectInlineJs.addAll(result.getAllJsIncludes());
 				collectInlineCss.addAll(result.getAllCssIncludes());
 			//	PhpOutput.insertCode(clsName, cppFile, layoutResult, result.getAllCssIncludes(), allJsIncludes);
-				PhpOutput.writeCompiledTemplateFile(layoutResult,result, TemplateConfig.getDestPath().resolve("CompiledTemplate"), TemplateConfig.getNamespace()+"\\CompiledTemplate", clsName,cfg);
+				PhpOutput.writeCompiledTemplateFile(layoutResult,result, subdir.isEmpty() ? pathCompiledTemplate : pathCompiledTemplate.resolve(subdir), TemplateConfig.getNamespace()+"\\CompiledTemplate"+subNamespace, clsName,cfg);
 			}
 			
 		} else {
 			collectInlineJs.addAll(result.getAllJsIncludes());
 			collectInlineCss.addAll(result.getAllCssIncludes());
 			//PhpOutput.insertCode(clsName, cppFile, result,  result.getAllCssIncludes(), result.getAllJsIncludes());
-			PhpOutput.writeCompiledTemplateFile(result,result, TemplateConfig.getDestPath().resolve("CompiledTemplate"), TemplateConfig.getNamespace()+"\\CompiledTemplate", clsName, cfg);
+			PhpOutput.writeCompiledTemplateFile(result,result, subdir.isEmpty() ? pathCompiledTemplate : pathCompiledTemplate.resolve(subdir), TemplateConfig.getNamespace()+"\\CompiledTemplate"+subNamespace, clsName, cfg);
 		}
 	}
 	
