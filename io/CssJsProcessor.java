@@ -97,8 +97,8 @@ public class CssJsProcessor {
 				if (src.startsWith("http")) {
 					if(tempFile != null)
 						Files.move(tempFile, file, StandardCopyOption.REPLACE_EXISTING);
-					else
-						System.out.println();
+					//else
+						//System.out.println();
 				} else {
 					file = originalFile;
 				}

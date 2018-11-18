@@ -447,7 +447,7 @@ public class HtmlParser {
 				startIndex = currentPos; 
 				next(HtmlParser.HTML_END_TAG.length());
 				if(!currSubstrEquals(tag.getNamespaceAndTagName())) {
-					System.out.println(html.substring(currentPos,currentPos+10));
+					//System.out.println(html.substring(currentPos,currentPos+10));
 					throw new IOException("end tag does not match: " + tag.getNamespaceAndTagName()+", pos "+currentPos);
 				}
 				next(tag.getNamespaceAndTagName().length());

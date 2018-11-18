@@ -1,7 +1,6 @@
 package io;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
@@ -19,15 +18,15 @@ public class JsCompressor implements Compressor{
 		ProcessBuilder proc = new ProcessBuilder("java","-jar", this.closureCompilerExecutable,input.toAbsolutePath().toString(),"--js_output_file",output.toAbsolutePath().toString(),"--jscomp_off=uselessCode");
 		Process p = proc.start();
 		try {
-			InputStream errorStream = p.getErrorStream();
+			/*InputStream errorStream = p.getErrorStream();
 			int r;
 			while((r=errorStream.read())>-1) {
-				System.out.print((char)r);
+				//System.out.print((char)r);
 			}
 			InputStream inputStream = p.getInputStream();
 			while((r=inputStream.read())>-1) {
-				System.out.print((char)r);
-			}
+				//System.out.print((char)r);
+			}*/
 			p.waitFor(30, TimeUnit.SECONDS);
 			
 
