@@ -249,28 +249,34 @@ public class PhpTpl2 {
 									
 									Path dir = (Path)key.watchable();
 									Path fullPath = dir.resolve(p);
-									if( Files.size(fullPath)==0) {
+									if( Files.size(fullPath)==0 
+											|| (!fullPath.toString().endsWith(".html")
+											&& !fullPath.toString().endsWith(".css")
+											&& !fullPath.toString().endsWith(".js"))
+											
+											) {
 										continue;
 									}
-								}
 								
-								LinkedHashSet<String> collectInlineJs = new LinkedHashSet<>();
-								LinkedHashSet<String> collectInlineCss = new LinkedHashSet<>();
-								for (TemplateConfig xmlConfig : xmlConfigs) {
-									Path basePath = TemplateConfig.getSrcPath();
-									String clsName = xmlConfig.getClsName();
-									Path templatePath = xmlConfig.getTmplPath();
-									Path cppFile = xmlConfig.getTplClsFile();
-									compileTemplate(basePath, repositoryPath, settings2, clsName, templatePath, cppFile,
-											TemplateConfig.getDestPath(), collectInlineJs, collectInlineCss, xmlConfig);
+								
+									LinkedHashSet<String> collectInlineJs = new LinkedHashSet<>();
+									LinkedHashSet<String> collectInlineCss = new LinkedHashSet<>();
+									for (TemplateConfig xmlConfig : xmlConfigs) {
+										Path basePath = TemplateConfig.getSrcPath();
+										String clsName = xmlConfig.getClsName();
+										Path templatePath = xmlConfig.getTmplPath();
+										Path cppFile = xmlConfig.getTplClsFile();
+										compileTemplate(basePath, repositoryPath, settings2, clsName, templatePath, cppFile,
+												TemplateConfig.getDestPath(), collectInlineJs, collectInlineCss, xmlConfig);
+									}
+									// PhpOutput.writeCompiledTemplateFile(result, directory, namespace,
+									// clsName);
+									PhpOutput.writeJsPhpFile(TemplateConfig.getDestPath().resolve("CompiledTemplate"),
+											TemplateConfig.getNamespace() + "\\CompiledTemplate", collectInlineJs);
+									PhpOutput.writeCssPhpFile(TemplateConfig.getDestPath().resolve("CompiledTemplate"),
+											TemplateConfig.getNamespace() + "\\CompiledTemplate", collectInlineCss,
+											TemplateConfig.isOptionInlineCssImages());
 								}
-								// PhpOutput.writeCompiledTemplateFile(result, directory, namespace,
-								// clsName);
-								PhpOutput.writeJsPhpFile(TemplateConfig.getDestPath().resolve("CompiledTemplate"),
-										TemplateConfig.getNamespace() + "\\CompiledTemplate", collectInlineJs);
-								PhpOutput.writeCssPhpFile(TemplateConfig.getDestPath().resolve("CompiledTemplate"),
-										TemplateConfig.getNamespace() + "\\CompiledTemplate", collectInlineCss,
-										TemplateConfig.isOptionInlineCssImages());
 								key.reset();
 							} catch (Exception e) {
 								e.printStackTrace();
