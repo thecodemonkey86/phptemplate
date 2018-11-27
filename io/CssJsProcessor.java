@@ -53,7 +53,7 @@ public class CssJsProcessor {
 		boolean isPreMinified = false;
 		try {
 			boolean localSrcCssNewer = false;
-			if (src.startsWith("http")) {
+			if (src.startsWith("http://") || src.startsWith("https://")) {
 				fileName = UrlUtil.getFileName(src);
 				
 				isPreMinified = fileName.endsWith(".min."+ext);
